@@ -77,6 +77,14 @@ export class MessageService {
         { sessionId, error: error instanceof Error ? error.message : String(error), input: finalDto },
         { sessionId, source: 'MessageService' },
       );
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      if (this.isWhatsAppRegistrationError(errorMessage)) {
+        await this.hookManager.execute(
+          'message:fallback',
+          { sessionId, channel: 'sms', reason: errorMessage, input: finalDto, type: 'text' },
+          { sessionId, source: 'MessageService' },
+        );
+      }
 
       throw error;
     }
@@ -489,5 +497,14 @@ export class MessageService {
       filename: dto.filename,
       caption: dto.caption,
     };
+  }
+
+  private isWhatsAppRegistrationError(errorMessage: string): boolean {
+    const normalized = errorMessage.toLowerCase();
+    return (
+      normalized.includes('not a whatsapp user') ||
+      normalized.includes('is not registered on whatsapp') ||
+      normalized.includes('invalid wid')
+    );
   }
 }

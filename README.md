@@ -65,6 +65,7 @@ Built on a **pluggable architecture**, OpenWA lets you swap database engines (SQ
 | Message Reactions | ✅     | React to messages with emoji     |
 | Bulk Messaging    | ✅     | Send to multiple recipients      |
 | Message Status    | ✅     | Track delivery and read receipts |
+| SMS Fallback Hook | ✅     | Optional plugin-based fallback trigger (initial scaffold) |
 
 ### Advanced
 
@@ -281,6 +282,7 @@ Comprehensive documentation is available in the `docs/` folder:
 | [API Spec](./docs/06-api-specification.md)              | Complete API reference       |
 | [Development](./docs/08-development-guidelines.md)      | Coding standards             |
 | [Migration Guide](./docs/14-migration-guide.md)         | Database & storage migration |
+| [SMS Fallback Plugin](./docs/23-sms-fallback-plugin.md) | Bundle B initial implementation notes |
 
 ---
 

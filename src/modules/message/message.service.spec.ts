@@ -134,6 +134,24 @@ describe('MessageService', () => {
         BadRequestException,
       );
     });
+
+    it('should emit message:fallback hook when target is not a WhatsApp account', async () => {
+      mockEngine.sendTextMessage.mockRejectedValueOnce(new Error('The number is not registered on WhatsApp'));
+
+      await expect(service.sendText('sess-1', { chatId: '628123456789@c.us', text: 'Hello' })).rejects.toThrow(
+        'The number is not registered on WhatsApp',
+      );
+
+      expect(hookManager.execute).toHaveBeenCalledWith(
+        'message:fallback',
+        expect.objectContaining({
+          sessionId: 'sess-1',
+          channel: 'sms',
+          type: 'text',
+        }),
+        expect.any(Object),
+      );
+    });
   });
 
   // ── sendImage ─────────────────────────────────────────────────────

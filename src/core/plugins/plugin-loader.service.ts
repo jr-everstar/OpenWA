@@ -14,6 +14,7 @@ import {
   PluginLogger,
 } from './plugin.interfaces';
 import { PluginStorageService } from './plugin-storage.service';
+import { SmsFallbackPlugin } from '../../plugins/extensions/sms-fallback.plugin';
 
 @Injectable()
 export class PluginLoaderService implements OnModuleInit {
@@ -45,10 +46,47 @@ export class PluginLoaderService implements OnModuleInit {
   }
 
   private loadBuiltInPlugins(): void {
-    // Built-in plugins are registered programmatically
-    // This will be used by Phase 4 to register engine plugins
-    this.logger.debug('Built-in plugins loading point (Phase 4)', {
+    const smsFallbackManifest: PluginManifest = {
+      id: 'sms-fallback',
+      name: 'SMS Fallback',
+      version: '0.1.0',
+      type: PluginType.EXTENSION,
+      description: 'Optional SMS fallback for WhatsApp registration failures',
+      main: 'index.ts',
+      hooks: ['message:failed'],
+      provides: ['sms-fallback'],
+      configSchema: {
+        type: 'object',
+        properties: {
+          enabled: {
+            type: 'boolean',
+            title: 'Enable SMS fallback',
+            default: false,
+          },
+          provider: {
+            type: 'string',
+            title: 'Provider',
+            description: 'SMS provider identifier',
+            default: 'mock',
+          },
+          apiKey: {
+            type: 'string',
+            title: 'Provider API key',
+            secret: true,
+          },
+          from: {
+            type: 'string',
+            title: 'Sender phone number',
+          },
+        },
+      },
+    };
+
+    this.registerBuiltInPlugin(smsFallbackManifest, new SmsFallbackPlugin());
+
+    this.logger.debug('Built-in plugins registered', {
       action: 'builtin_plugins_init',
+      plugins: ['sms-fallback'],
     });
   }
 

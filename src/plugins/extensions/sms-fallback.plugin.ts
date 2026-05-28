@@ -17,7 +17,7 @@ export class SmsFallbackPlugin implements IPlugin {
     context.registerHook('message:failed', hookCtx => {
       const data = hookCtx.data as MessageFailedHookData;
       if (!this.isEnabled(context.config) || !this.isWhatsAppRegistrationError(data.error)) {
-        return { continue: true } satisfies HookResult<MessageFailedHookData>;
+        return Promise.resolve({ continue: true } satisfies HookResult<MessageFailedHookData>);
       }
 
       const provider = typeof context.config.provider === 'string' ? context.config.provider : 'mock';
